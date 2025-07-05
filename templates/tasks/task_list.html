@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Your Tasks</title>
+</head>
+<body>
+    <h1>Tasks for {{ user.username }}</h1>
+
+    <ul>
+        {% for task in object_list %}
+            <li>
+                <strong>{{ task.title }}</strong>
+                {% if task.completed %}(Completed){% endif %}
+                <br />
+                {% if task.due_date %}Due: {{ task.due_date|date:"Y-m-d H:i" }}{% endif %}
+                <br />
+                {{ task.description|linebreaks }}
+            </li>
+        {% empty %}
+            <li>No tasks found.</li>
+        {% endfor %}
+    </ul>
+
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Logout</button>
+    </form>
+
+    <p><a href="{% url 'main-profile' %}">Back to Profile</a></p>
+
+    <h2>Add a New Task</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Task</button>
+    </form>
+</body>
+</html>
