@@ -1,18 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>Update Task</title>
-</head>
-<body>
-    <h1>Update Task: {{ task.title }}</h1>
+{% extends 'base.html' %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save Changes</button>
-    </form>
-
-    <p><a href="{% url 'task-list' %}">Cancel</a></p>
-</body>
-</html>
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="card-title">Update Task: {{ task.title }}</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_title" class="form-label">Title</label>
+                {{ form.title }}
+            </div>
+            <div class="mb-3">
+                <label for="id_description" class="form-label">Description</label>
+                {{ form.description }}
+            </div>
+            <div class="form-check mb-3">
+                {{ form.completed }}
+                <label class="form-check-label" for="id_completed">
+                    Mark as completed
+                </label>
+            </div>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <a href="{% url 'task-list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,48 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <title>Your Tasks</title>
-</head>
-<body>
-    <h1>Welcome, {{ user.username }}!</h1>
-<form action="{% url 'logout' %}" method="post" style="display: inline;">
-    {% csrf_token %}
-    <button type="submit" style="background:none; border:none; padding:0; color:blue; text-decoration:underline; cursor:pointer;">
-        Logout
-    </button>
-</form>
-    <hr>
+{% extends 'base.html' %}
 
-    <h2>Add a New Task</h2>
-    <form method="post" action="">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Task</button>
-    </form>
+{% block content %}
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h2 class="card-title">Add a New Task</h2>
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_title" class="form-label">Title</label>
+                {{ form.title }}
+            </div>
+            <div class="mb-3">
+                <label for="id_description" class="form-label">Description</label>
+                {{ form.description }}
+            </div>
+            <div class="form-check mb-3">
+                {{ form.completed }}
+                <label class="form-check-label" for="id_completed">
+                    Mark as completed
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Task</button>
+        </form>
+    </div>
+</div>
 
-    <hr>
-
-    <h2>Your To-Do List</h2>
-    <ul>
-        {% for task in tasks %}
-            <li>
-                <strong>{{ task.title }}</strong>
-                {% if task.completed %}
-                    <span style="color: green;">(Completed)</span>
-                {% else %}
-                    <span style="color: orange;">(Incomplete)</span>
-                {% endif %}
-                <p>{{ task.description|linebreaks }}</p>
-                <small>
-                    <a href="{% url 'task-update' task.id %}">Edit</a> |
-                    <a href="{% url 'task-delete' task.id %}" style="color: red;">Delete</a>
-                </small>
-            </li>
-            <hr>
-        {% empty %}
-            <li>No tasks yet. Create one above!</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+<h2 class="mb-3">Your To-Do List</h2>
+<div class="list-group">
+    {% for task in tasks %}
+        <div class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">
+                    {% if task.completed %}
+                        <del>{{ task.title }}</del>
+                    {% else %}
+                        {{ task.title }}
+                    {% endif %}
+                </h5>
+                <small class="text-muted">{{ task.created_at|date:"M d, Y" }}</small>
+            </div>
+            <p class="mb-1">{{ task.description|linebreaksbr }}</p>
+            <div>
+                <a href="{% url 'task-update' task.id %}" class="btn btn-sm btn-info">Edit</a>
+                <a href="{% url 'task-delete' task.id %}" class="btn btn-sm btn-danger">Delete</a>
+            </div>
+        </div>
+    {% empty %}
+        <div class="list-group-item">No tasks yet. Create one above!</div>
+    {% endfor %}
+</div>
+{% endblock %}
