@@ -6,6 +6,8 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from .models import Task
 from .forms import TaskForm
+from django.contrib.auth.models import User
+from django.db.models import Count, Q
 
 class RegisterView(generic.CreateView):
     form_class = UserCreationForm
@@ -70,3 +72,18 @@ def task_delete(request, pk):
 
     context = {'task': task}
     return render(request, 'tasks/task_delete.html', context)
+
+@login_required
+def leaderboard(request):
+    """
+    Displays a leaderboard of users, ranked by completed tasks.
+    """
+    users_with_tasks = User.objects.annotate(
+        total_tasks=Count('task'),
+        completed_tasks=Count('task', filter=Q(task__completed=True))
+    ).order_by('-completed_tasks', '-total_tasks') # Order by most completed, then most total
+
+    context = {
+        'users_list': users_with_tasks
+    }
+    return render(request, 'tasks/leaderboard.html', context)

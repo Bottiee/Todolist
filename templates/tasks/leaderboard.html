@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h2 class="mb-0">User Leaderboard</h2>
+    </div>
+    <div class="card-body">
+        <p class="card-text">See who the most productive users are!</p>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Completed Tasks</th>
+                        <th scope="col">Total Tasks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_stat in users_list %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td><i class="bi bi-person-fill me-2"></i>{{ user_stat.username }}</td>
+                        <td>{{ user_stat.completed_tasks }}</td>
+                        <td>{{ user_stat.total_tasks }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
