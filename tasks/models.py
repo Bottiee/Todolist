@@ -5,9 +5,11 @@ class Task(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    completed = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    due_date = models.DateTimeField(null=True, blank=True)
 
-def __str__(self):
-    return self.title
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['completed', '-created_at']
