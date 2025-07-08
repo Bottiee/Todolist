@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Superuser Dashboard</h1>
+    <p>View all users and their assigned tasks.</p>
+    <hr>
+
+    {% for user in users %}
+    <div class="card mb-3">
+        <div class="card-header">
+            <strong>{{ user.username }}</strong>
+            <span class="text-muted small">({{ user.task_set.count }} task{{ user.task_set.count|pluralize }})</span>
+        </div>
+        <div class="card-body">
+            {% if user.task_set.all %}
+                <details>
+                    <summary style="cursor: pointer;">View Tasks</summary>
+                    <ul class="list-group mt-3">
+                        {% for task in user.task_set.all %}
+                        <li class="list-group-item">
+                            {{ task.title }}
+                            {% if task.completed %}
+                                <span class="badge bg-success">Completed</span>
+                            {% else %}
+                                <span class="badge bg-warning text-danger">Incomplete</span>
+                            {% endif %}
+                            <br>
+                            <small class="text-muted">Created: {{ task.created_at|date:"Y-m-d H:i" }}</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </details>
+            {% else %}
+                <p class="text-muted">This user has no tasks.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -8,6 +8,7 @@ from .models import Task
 from .forms import TaskForm
 from django.contrib.auth.models import User
 from django.db.models import Count, Q
+from django.http import HttpResponseForbidden
 
 class RegisterView(generic.CreateView):
     form_class = UserCreationForm
@@ -87,3 +88,17 @@ def leaderboard(request):
         'users_list': users_with_tasks
     }
     return render(request, 'tasks/leaderboard.html', context)
+
+@login_required
+def superuser_dashboard(request):
+    # 1. Check if the user is a superuser
+    if not request.user.is_superuser:
+        # If not, return a 'Forbidden' response
+        return HttpResponseForbidden("You do not have permission to view this page.")
+
+    # 2. Get all users and their tasks
+    # We use prefetch_related to efficiently get all tasks for all users in one go
+    all_users = User.objects.prefetch_related('task_set').all()
+
+    # 3. Render the template with the data
+    return render(request, 'tasks/superuser_dashboard.html', {'users': all_users})
