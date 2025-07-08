@@ -1,14 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views import generic
 from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
-from django.contrib import messages
-from .models import Task
-from .forms import TaskForm
 from django.contrib.auth.models import User
+from django.contrib import messages
+from django.views import generic
+from django.urls import reverse_lazy
 from django.db.models import Count, Q
 from django.http import HttpResponseForbidden
+from .models import Task
+from .forms import TaskForm
+import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 
 class RegisterView(generic.CreateView):
     form_class = UserCreationForm
@@ -109,3 +113,31 @@ def user_profile(request):
     Renders the user's profile page.
     """
     return render(request, 'tasks/profile.html')
+
+
+@require_POST
+@login_required
+def update_task_order(request):
+    try:
+        # Get the ordered list of task IDs from the request body
+        ordered_ids = json.loads(request.body).get('ordered_ids')
+
+        if ordered_ids is None:
+            return JsonResponse({'status': 'error', 'message': 'Missing ordered_ids'}, status=400)
+
+        # Get all tasks for the current user that are in the list
+        tasks = Task.objects.filter(user=request.user, id__in=ordered_ids)
+
+        # Create a dictionary for quick lookup
+        task_map = {task.id: task for task in tasks}
+
+        # Update priority for each task based on the new order
+        for index, task_id in enumerate(ordered_ids):
+            if task_id in task_map:
+                task = task_map[task_id]
+                task.priority = index  # Set priority to the new index
+                task.save()
+
+        return JsonResponse({'status': 'success', 'message': 'Task order updated successfully.'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

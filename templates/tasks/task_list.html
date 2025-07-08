@@ -38,12 +38,13 @@
 </div>
 
 <h2 class="mb-3">Your To-Do List</h2>
-<div class="list-group">
+<div class="list-group" id="task-list-container">
     {% for task in tasks %}
-        <div class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="list-group-item list-group-item-action flex-column align-items-start" data-id="{{ task.id }}">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">
-                    <i class="bi bi-check2-square me-2"></i>
+                <h5 class="mb-1 d-flex align-items-center">
+                    <span class="fw-bold me-2 priority-indicator">{{ forloop.counter }}.</span>
+
                     {% if task.completed %}
                         <del>{{ task.title }}</del>
                     {% else %}
@@ -68,4 +69,54 @@
         <div class="list-group-item">No tasks yet. Create one above!</div>
     {% endfor %}
 </div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('task-list-container');
+
+    const sortable = new Sortable(container, {
+        animation: 150,
+        onEnd: function (evt) {
+            updateTaskOrder();
+        }
+    });
+
+    function updateTaskOrder() {
+        const taskElements = container.querySelectorAll('.list-group-item');
+        const orderedIds = Array.from(taskElements).map(el => parseInt(el.dataset.id));
+
+        taskElements.forEach((task, index) => {
+            const indicator = task.querySelector('.priority-indicator');
+            if (indicator) {
+                indicator.textContent = `${index + 1}.`;
+            }
+        });
+
+        fetch("{% url 'update-task-order' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ ordered_ids: orderedIds })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log('Task order saved successfully!');
+            } else {
+                console.error('Failed to save task order:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+});
+</script>
 {% endblock %}

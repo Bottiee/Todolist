@@ -8,4 +8,5 @@ urlpatterns = [
     path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('superuser/dashboard/', views.superuser_dashboard, name='superuser_dashboard'),
     path('profile/', views.user_profile, name='user-profile'),
+    path('update-task-order/', views.update_task_order, name='update-task-order'),
 ]
