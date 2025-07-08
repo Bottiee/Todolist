@@ -10,8 +10,10 @@
             <h5 class="card-title">Username</h5>
             <p class="card-text">{{ user.username }}</p>
 
-            <h5 class="card-title mt-3">Email</h5>
-            <p class="card-text">{{ user.email }}</p>
+            {% if user.email %}
+                <h5 class="card-title mt-3">Email</h5>
+                <p class="card-text">{{ user.email }}</p>
+            {% endif %}
             
             <h5 class="card-title mt-3">Date Joined</h5>
             <p class="card-text">{{ user.date_joined|date:"F d, Y" }}</p>

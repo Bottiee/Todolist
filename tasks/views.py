@@ -56,7 +56,7 @@ def task_update(request, pk):
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
             form.save()
-            messages.success(request, f'Task "{task.title}" updated successfully!')  # Add message
+            messages.success(request, f'Task "{task.title}" updated successfully!')
             return redirect('task-list')
     else:
         form = TaskForm(instance=task)
@@ -72,7 +72,7 @@ def task_delete(request, pk):
     if request.method == 'POST':
         task_title = task.title
         task.delete()
-        messages.success(request, f'Task "{task_title}" deleted successfully!')  # Add message
+        messages.success(request, f'Task "{task_title}" deleted successfully!')
         return redirect('task-list')
 
     context = {'task': task}
