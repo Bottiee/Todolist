@@ -102,3 +102,10 @@ def superuser_dashboard(request):
 
     # 3. Render the template with the data
     return render(request, 'tasks/superuser_dashboard.html', {'users': all_users})
+
+@login_required
+def user_profile(request):
+    """
+    Renders the user's profile page.
+    """
+    return render(request, 'tasks/profile.html')

@@ -7,4 +7,5 @@ urlpatterns = [
     path('delete/<int:pk>/', views.task_delete, name='task-delete'),
     path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('superuser/dashboard/', views.superuser_dashboard, name='superuser_dashboard'),
+    path('profile/', views.user_profile, name='user-profile'),
 ]
