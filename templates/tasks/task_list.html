@@ -51,7 +51,7 @@
                         {{ task.title }}
                     {% endif %}
                 </h5>
-                <small class="text-muted">{{ task.created_at|date:"M d, Y" }}</small>
+                <small class="text-muted">{{ task.created_at|date:"M d, Y H:i" }}</small>
             </div>
 
             {% if task.description %}
